@@ -1,10 +1,12 @@
 import { useEffect, useReducer, useCallback } from 'react';
 import './style.css';
 
-const behavior = {
+const TIMESTEP = 20; // ms
+const SIZE = 10; // px
+const BEHAVIOR = {
   inactive: {
-    speed: 0,
-    rotation: 0,
+    speed: 0, // px per TIMESTEP
+    rotation: 0, // range of possible rotations in radians per TIMESTEP
   },
   active: {
     speed: 1,
@@ -15,8 +17,6 @@ const behavior = {
     rotation: 2,
   },
 };
-
-const TIMESTEP = 20; // ms
 
 function constrain(value, min, max) {
   if (value >= min) {
@@ -43,14 +43,14 @@ function generateInitialState(windowSize) {
 function reducer(state, action) {
   switch (action.type) {
     case "timeStep": 
-      const newX = state.x + behavior[state.status].speed * Math.cos(state.direction);
-      const newY = state.y + behavior[state.status].speed * Math.sin(state.direction);
+      const newX = state.x + BEHAVIOR[state.status].speed * Math.cos(state.direction);
+      const newY = state.y + BEHAVIOR[state.status].speed * Math.sin(state.direction);
 
       return {
         ...state,
-        x: constrain(newX, 0, action.windowSize.width),
-        y: constrain(newY, 0, action.windowSize.height),
-        direction: state.direction + behavior[state.status].rotation * (Math.random() - 0.5),
+        x: constrain(newX, 0, action.windowSize.width - SIZE),
+        y: constrain(newY, 0, action.windowSize.height - SIZE),
+        direction: state.direction + BEHAVIOR[state.status].rotation * (Math.random() - 0.5),
       };
 
     case "wakeUp":
@@ -85,7 +85,7 @@ function Bug(props) {
   );
 
   return (
-    <div className="Bug" style={{left: state.x, top: state.y}}>
+    <div className="Bug" style={{ left: state.x, top: state.y, height: SIZE, width: SIZE }}>
     </div>
   );
 }
