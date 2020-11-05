@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useCallback } from 'react';
 import './style.css';
 
 const behavior = {
@@ -69,12 +69,20 @@ function reducer(state, action) {
 function Bug(props) {
   const [state, dispatch] = useReducer(reducer, generateInitialState(props.windowSize));
 
-  useEffect(() => {
-    const timeStepInterval = setInterval(() => {
+  const handleTimeStep = useCallback(
+    () => {
       dispatch({type: "timeStep", windowSize: props.windowSize});
-    }, TIMESTEP);
-    return () => clearInterval(timeStepInterval);
-  }, []);
+    }, 
+    [props.windowSize]
+  );
+
+  useEffect(
+    () => {
+      const timeStepInterval = setInterval(handleTimeStep, TIMESTEP);
+      return () => clearInterval(timeStepInterval);
+    }, 
+    [handleTimeStep]
+  );
 
   return (
     <div className="Bug" style={{left: state.x, top: state.y}}>
