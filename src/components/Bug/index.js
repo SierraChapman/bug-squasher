@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import './style.css';
 
 const behavior = {
@@ -8,13 +8,27 @@ const behavior = {
   },
   active: {
     speed: 1,
-    rotation: 1,
+    rotation: 0.5,
   },
   excited: {
     speed: 2,
-    rotation: 3,
+    rotation: 2,
   },
 };
+
+const TIMESTEP = 20; // ms
+
+function constrain(value, min, max) {
+  if (value >= min) {
+    if (value <= max) {
+      return value;
+    } else {
+      return max;
+    }
+  } else {
+    return min;
+  }
+}
 
 function generateInitialState(windowSize) {
   return {
@@ -27,11 +41,41 @@ function generateInitialState(windowSize) {
 }
 
 function reducer(state, action) {
-  return state;
+  switch (action.type) {
+    case "timeStep": 
+      const newX = state.x + behavior[state.status].speed * Math.cos(state.direction);
+      const newY = state.y + behavior[state.status].speed * Math.sin(state.direction);
+
+      return {
+        ...state,
+        x: constrain(newX, 0, action.windowSize.width),
+        y: constrain(newY, 0, action.windowSize.height),
+        direction: state.direction + behavior[state.status].rotation * (Math.random() - 0.5),
+      };
+
+    case "wakeUp":
+      return state;
+    case "squash":
+      return state;
+    case "scare":
+      return state;
+    case "calm":
+      return state;
+    default:
+      return state;
+  }
 }
 
 function Bug(props) {
   const [state, dispatch] = useReducer(reducer, generateInitialState(props.windowSize));
+
+  useEffect(() => {
+    const timeStepInterval = setInterval(() => {
+      dispatch({type: "timeStep", windowSize: props.windowSize});
+    }, TIMESTEP);
+    return () => clearInterval(timeStepInterval);
+  }, []);
+
   return (
     <div className="Bug" style={{left: state.x, top: state.y}}>
     </div>
