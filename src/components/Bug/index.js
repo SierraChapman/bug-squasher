@@ -16,11 +16,11 @@ const behavior = {
   },
 };
 
-function generateInitialState(windowDimensions) {
+function generateInitialState(windowSize) {
   return {
     status: "active",
-    x: Math.random() * windowDimensions.width,
-    y: Math.random() * windowDimensions.height,
+    x: Math.random() * windowSize.width,
+    y: Math.random() * windowSize.height,
     direction: Math.random() * 2 * Math.PI,
     downtime: 1,
   };
@@ -31,8 +31,7 @@ function reducer(state, action) {
 }
 
 function Bug(props) {
-  const [state, dispatch] = useReducer(reducer, generateInitialState(props.window));
-  console.log(state);
+  const [state, dispatch] = useReducer(reducer, generateInitialState(props.windowSize));
   return (
     <div className="Bug" style={{left: state.x, top: state.y}}>
     </div>
