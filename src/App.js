@@ -4,7 +4,7 @@ import Bug from "./components/Bug";
 function App() {
   return (
     <div className="App">
-      <Bug />
+      <Bug window={{height: 500, width: 1000}}/>
     </div>
   );
 }
