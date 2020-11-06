@@ -2,25 +2,22 @@ import { useEffect, useReducer, useCallback } from 'react';
 import './style.css';
 
 const TIMESTEP = 20; // ms
-const SIZE = 10; // px
+const SIZE = 50; // px
 const BEHAVIOR = {
-  inactive: {
-    speed: 0, // px per TIMESTEP
-    rotation: 0, // range of possible rotations in radians per TIMESTEP
-  },
-  active: {
-    speed: 1,
+  normal: {
+    speed: 1, // px per TIMESTEP
     rotation: 0.5,
   },
   excited: {
-    speed: 2,
+    speed: 2, // range of possible rotations in radians per TIMESTEP
     rotation: 2,
   },
 };
 
 function generateInitialState(windowSize) {
   return {
-    status: "active",
+    active: true,
+    excited: false,
     x: Math.random() * windowSize.width,
     y: Math.random() * windowSize.height,
     direction: Math.random() * 2 * Math.PI,
@@ -31,13 +28,15 @@ function generateInitialState(windowSize) {
 function reducer(state, action) {
   switch (action.type) {
     case "timeStep": 
-      if (state.status === "inactive") {
+      if (!state.active) {
         return state;
       }
 
-      let newX = state.x + BEHAVIOR[state.status].speed * Math.cos(state.direction);
-      let newY = state.y + BEHAVIOR[state.status].speed * Math.sin(state.direction);
-      let newDirection = state.direction + BEHAVIOR[state.status].rotation * (Math.random() - 0.5);
+      const behavior = state.excited ? BEHAVIOR.excited : BEHAVIOR.normal;
+
+      let newX = state.x + behavior.speed * Math.cos(state.direction);
+      let newY = state.y + behavior.speed * Math.sin(state.direction);
+      let newDirection = state.direction + behavior.rotation * (Math.random() - 0.5);
       newDirection %= 2 * Math.PI;
       const maxX = action.windowSize.width - SIZE;
       const maxY = action.windowSize.height - SIZE;
@@ -89,7 +88,7 @@ function reducer(state, action) {
     case "calm":
       return state;
     case "squash":
-      if (state.status === "inactive") {
+      if (!state.active) {
         return state;
       }
       
@@ -98,10 +97,10 @@ function reducer(state, action) {
         state.downtime * 1000
       );
 
-      return { ...state, status: "inactive", downtime: state.downtime + 1 };
+      return { ...state, active: false, excited: false, downtime: state.downtime + 1 };
 
     case "wakeUp":
-      return { ...state, status: "active" };
+      return { ...state, active: true };
     default:
       return state;
   }
