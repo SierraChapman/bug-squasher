@@ -43,15 +43,54 @@ function generateInitialState(windowSize) {
 function reducer(state, action) {
   switch (action.type) {
     case "timeStep": 
-      const newX = state.x + BEHAVIOR[state.status].speed * Math.cos(state.direction);
-      const newY = state.y + BEHAVIOR[state.status].speed * Math.sin(state.direction);
+      let newX = state.x + BEHAVIOR[state.status].speed * Math.cos(state.direction);
+      let newY = state.y + BEHAVIOR[state.status].speed * Math.sin(state.direction);
+      let newDirection = state.direction + BEHAVIOR[state.status].rotation * (Math.random() - 0.5);
+      newDirection %= 2 * Math.PI;
+      const maxX = action.windowSize.width - SIZE;
+      const maxY = action.windowSize.height - SIZE;
 
-      return {
-        ...state,
-        x: constrain(newX, 0, action.windowSize.width - SIZE),
-        y: constrain(newY, 0, action.windowSize.height - SIZE),
-        direction: state.direction + BEHAVIOR[state.status].rotation * (Math.random() - 0.5),
-      };
+      if (newX < 0) {
+        newX = 0;
+        if (newY < 0) {
+          // top left corner
+          newY = 0;
+          newDirection = newDirection > 5 * Math.PI/4 ? 0 : Math.PI/2;
+        } else if (newY > maxY) {
+          // bottom left corner
+          newY = maxY;
+          newDirection = newDirection > 3 * Math.PI/4 ? 3 * Math.PI/2 : 0;
+        } else {
+          // left edge
+          newDirection = newDirection > Math.PI ? 3 * Math.PI/2 : Math.PI/2;
+        }
+      } else if (newX > maxX) {
+        newX = maxX;
+        if (newY < 0) {
+          // top right corner
+          newY = 0;
+          newDirection = newDirection > 7 * Math.PI/4 ? Math.PI/2 : Math.PI;
+        } else if (newY > maxY) {
+          // bottom right corner
+          newY = maxY;
+          newDirection = newDirection > Math.PI/4 ? Math.PI : 3 * Math.PI/2;
+        } else {
+          // right edge
+          newDirection = newDirection > Math.PI ? 3 * Math.PI/2 : Math.PI/2;
+        }
+      } else {
+        if (newY < 0) {
+          // top edge
+          newY = 0;
+          newDirection = newDirection > 3 * Math.PI/2 ? 0 : Math.PI;
+        } else if (newY > maxY) {
+          // bottom edge
+          newY = maxY;
+          newDirection = newDirection > Math.PI/2 ? Math.PI : 0;
+        }
+      }
+
+      return { ...state, x: newX, y: newY, direction: newDirection };
 
     case "wakeUp":
       return state;
