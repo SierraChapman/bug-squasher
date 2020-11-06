@@ -31,6 +31,10 @@ function generateInitialState(windowSize) {
 function reducer(state, action) {
   switch (action.type) {
     case "timeStep": 
+      if (state.status === "inactive") {
+        return state;
+      }
+
       let newX = state.x + BEHAVIOR[state.status].speed * Math.cos(state.direction);
       let newY = state.y + BEHAVIOR[state.status].speed * Math.sin(state.direction);
       let newDirection = state.direction + BEHAVIOR[state.status].rotation * (Math.random() - 0.5);
@@ -80,14 +84,24 @@ function reducer(state, action) {
 
       return { ...state, x: newX, y: newY, direction: newDirection };
 
-    case "wakeUp":
-      return state;
-    case "squash":
-      return state;
     case "scare":
       return state;
     case "calm":
       return state;
+    case "squash":
+      if (state.status === "inactive") {
+        return state;
+      }
+      
+      setTimeout(
+        () => action.dispatch({ type: "wakeUp" }),
+        state.downtime * 1000
+      );
+
+      return { ...state, status: "inactive", downtime: state.downtime + 1 };
+
+    case "wakeUp":
+      return { ...state, status: "active" };
     default:
       return state;
   }
@@ -112,8 +126,11 @@ function Bug(props) {
   );
 
   return (
-    <div className="Bug" style={{ left: state.x, top: state.y, height: SIZE, width: SIZE }}>
-    </div>
+    <div 
+      className="Bug" 
+      style={{ left: state.x, top: state.y, height: SIZE, width: SIZE }}
+      onClick= {() => dispatch({ type: "squash", dispatch: dispatch })}
+    ></div>
   );
 }
 
