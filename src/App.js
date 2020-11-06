@@ -48,6 +48,10 @@ function App() {
 
   return (
     <div className="App">
+      <div className="scores">
+        <div>CURRENT SCORE: {state.score}</div>
+        <div>HIGH SCORE: {state.highScore}</div>
+      </div>
       {state.bugs.map(bugKey => <Bug key={bugKey} id={bugKey} windowSize={windowSize} appDispatch={dispatch} />)}
     </div>
   );
