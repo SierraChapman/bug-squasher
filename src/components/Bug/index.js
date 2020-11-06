@@ -18,18 +18,6 @@ const BEHAVIOR = {
   },
 };
 
-function constrain(value, min, max) {
-  if (value >= min) {
-    if (value <= max) {
-      return value;
-    } else {
-      return max;
-    }
-  } else {
-    return min;
-  }
-}
-
 function generateInitialState(windowSize) {
   return {
     status: "active",
