@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useCallback } from 'react';
+import { useEffect, useReducer, useCallback, useRef } from 'react';
 import './style.css';
 
 const TIMESTEP = 20; // ms
@@ -108,6 +108,7 @@ function reducer(state, action) {
 
 function Bug(props) {
   const [state, dispatch] = useReducer(reducer, generateInitialState(props.windowSize));
+  const initialRender = useRef(true);
 
   const handleTimeStep = useCallback(
     () => {
@@ -122,6 +123,17 @@ function Bug(props) {
       return () => clearInterval(timeStepInterval);
     }, 
     [handleTimeStep]
+  );
+
+  useEffect(
+    () => {
+      if (initialRender.current) {
+        initialRender.current = false;
+      } else {
+        props.appDispatch({ type: state.active ? "awoke" : "squashed" });
+      }
+    },
+    [state.active]
   );
 
   return (
