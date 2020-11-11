@@ -2,4 +2,6 @@
     background-color: black;
     border-radius: 50%;
     position: fixed;
+
+    transition: 20ms;
 }

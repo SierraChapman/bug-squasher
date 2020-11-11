@@ -152,7 +152,7 @@ function Bug(props) {
   return (
     <div 
       className="Bug" 
-      style={{ left: state.x, top: state.y, height: SIZE, width: SIZE }}
+      style={{ left: state.x, top: state.y, height: SIZE, width: SIZE, boxShadow: state.active ? "0px 2px 6px rgba(0, 0, 0, 0.5)" : "0px 0px 3px rgba(0, 0, 0, 0.5)" }}
       onClick= {() => dispatch({ type: "squash", dispatch: dispatch })}
     ></div>
   );
