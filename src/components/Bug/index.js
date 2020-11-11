@@ -13,6 +13,7 @@ const BEHAVIOR = {
     rotation: 2,
   },
 };
+const ESCAPE_TIME = 90; // seconds
 
 function generateInitialState(windowSize) {
   return {
@@ -125,15 +126,27 @@ function Bug(props) {
     [handleTimeStep]
   );
 
+  const { id, appDispatch } = props;
+
   useEffect(
     () => {
       if (initialRender.current) {
         initialRender.current = false;
       } else {
-        props.appDispatch({ type: state.active ? "awoke" : "squashed" });
+        appDispatch({ type: state.active ? "awoke" : "squashed" });
+      }
+
+      if (state.active) {
+        const escapeTimeout = setTimeout(
+          () => {
+            appDispatch({ type: "escaped", key: id });
+          },
+          ESCAPE_TIME * 1000
+        );
+        return () => clearTimeout(escapeTimeout);
       }
     },
-    [state.active]
+    [state.active, id, appDispatch]
   );
 
   return (

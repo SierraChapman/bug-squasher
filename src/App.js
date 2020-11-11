@@ -15,6 +15,9 @@ function reducer(state, action) {
     case "awoke":
       newState = { ...state, score: state.score - 1};
       break;
+    case "escaped":
+      newState = { ...state, bugs: state.bugs.filter(bugKey => bugKey !== action.key) };
+      break;
     default:
       newState = state;
   }
@@ -24,7 +27,6 @@ function reducer(state, action) {
   }
 
   if (newState.score === newState.bugs.length) {
-    console.log("generating bug");
     newState.bugs = [...newState.bugs, Date.now() ];
   }
 
