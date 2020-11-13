@@ -1,8 +1,9 @@
-import { useEffect, useReducer, useCallback, useRef } from 'react';
+import { useEffect, useReducer, useCallback } from 'react';
 import './style.css';
 
 const TIMESTEP = 20; // ms
 const SIZE = 50; // px
+const AWARENESS_RADIUS = 50; // px
 const BEHAVIOR = {
   normal: {
     speed: 1, // px per TIMESTEP
@@ -145,17 +146,29 @@ function Bug(props) {
   );
 
   return (
-    <div
-      className="Bug"
-      style={{
-        left: state.x,
-        top: state.y,
-        height: SIZE,
-        width: SIZE,
-        boxShadow: state.active ? "0px 2px 6px rgba(0, 0, 0, 0.5)" : "0px 0px 3px rgba(0, 0, 0, 0.5)",
-      }}
-      onClick={() => dispatch({ type: "squash", dispatch: dispatch })}
-    ></div>
+    <>
+      <div
+        className="Bug"
+        style={{
+          left: state.x,
+          top: state.y,
+          height: SIZE,
+          width: SIZE,
+          boxShadow: state.active ? "0px 2px 6px rgba(0, 0, 0, 0.5)" : "0px 0px 3px rgba(0, 0, 0, 0.5)",
+        }}
+        onClick={() => dispatch({ type: "squash", dispatch: dispatch })}
+      ></div>
+      <div
+        className="bugAwareZone"
+        style={{
+          left: state.x - AWARENESS_RADIUS,
+          top: state.y - AWARENESS_RADIUS,
+          height: AWARENESS_RADIUS * 2 + SIZE,
+          width: AWARENESS_RADIUS * 2 + SIZE,
+        }}
+      ></div>
+    </>
+    
   );
 }
 

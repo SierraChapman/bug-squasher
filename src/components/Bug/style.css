@@ -1,8 +1,20 @@
 .Bug {
+    background-image: radial-gradient(at 45% 35%, rgb(63, 63, 63), rgb(0, 0, 0));
     background-color: black;
     border-radius: 50%;
+
     position: fixed;
+    z-index: 1;
 
     transition: 20ms;
-    background-image: radial-gradient(at 45% 35%, rgb(63, 63, 63), rgb(0, 0, 0));
+}
+
+.bugAwareZone {
+    background-color: rgba(255, 0, 0, 0.5);
+    border-radius: 50%;
+
+    position: fixed;
+    z-index: 0;
+
+    transition: 20ms;
 }
