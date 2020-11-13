@@ -15,6 +15,7 @@ const BEHAVIOR = {
   },
 };
 const ESCAPE_TIME = 90; // seconds
+const EXCITE_TIME = 5; // seconds
 
 function generateInitialState(windowSize) {
   return {
@@ -86,9 +87,19 @@ function reducer(state, action) {
       return { ...state, x: newX, y: newY, direction: newDirection };
 
     case "scare":
-      return state;
+      if (!state.active || state.excited) {
+        return state;
+      }
+
+      setTimeout(
+        () => action.dispatch({ type: "calm" }),
+        EXCITE_TIME * 1000
+      );
+
+      return { ...state, excited: true };
+
     case "calm":
-      return state;
+      return { ...state, excited: false };
     case "squash":
       if (!state.active) {
         return state;
@@ -99,7 +110,7 @@ function reducer(state, action) {
         state.downtime * 1000
       );
 
-      return { ...state, active: false, excited: false, downtime: state.downtime + 1 };
+      return { ...state, active: false, downtime: state.downtime + 1 };
 
     case "wakeUp":
       return { ...state, active: true };
@@ -166,6 +177,7 @@ function Bug(props) {
           height: AWARENESS_RADIUS * 2 + SIZE,
           width: AWARENESS_RADIUS * 2 + SIZE,
         }}
+        onClick={() => dispatch({ type: "scare", dispatch: dispatch })}
       ></div>
     </>
     
