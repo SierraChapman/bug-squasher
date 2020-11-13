@@ -28,7 +28,7 @@ function generateInitialState(windowSize) {
 
 function reducer(state, action) {
   switch (action.type) {
-    case "timeStep": 
+    case "timeStep":
       if (!state.active) {
         return state;
       }
@@ -47,38 +47,38 @@ function reducer(state, action) {
         if (newY < 0) {
           // top left corner
           newY = 0;
-          newDirection = newDirection > 5 * Math.PI/4 ? 0 : Math.PI/2;
+          newDirection = newDirection > 5 * Math.PI / 4 ? 0 : Math.PI / 2;
         } else if (newY > maxY) {
           // bottom left corner
           newY = maxY;
-          newDirection = newDirection > 3 * Math.PI/4 ? 3 * Math.PI/2 : 0;
+          newDirection = newDirection > 3 * Math.PI / 4 ? 3 * Math.PI / 2 : 0;
         } else {
           // left edge
-          newDirection = newDirection > Math.PI ? 3 * Math.PI/2 : Math.PI/2;
+          newDirection = newDirection > Math.PI ? 3 * Math.PI / 2 : Math.PI / 2;
         }
       } else if (newX > maxX) {
         newX = maxX;
         if (newY < 0) {
           // top right corner
           newY = 0;
-          newDirection = newDirection > 7 * Math.PI/4 ? Math.PI/2 : Math.PI;
+          newDirection = newDirection > 7 * Math.PI / 4 ? Math.PI / 2 : Math.PI;
         } else if (newY > maxY) {
           // bottom right corner
           newY = maxY;
-          newDirection = newDirection > Math.PI/4 ? Math.PI : 3 * Math.PI/2;
+          newDirection = newDirection > Math.PI / 4 ? Math.PI : 3 * Math.PI / 2;
         } else {
           // right edge
-          newDirection = newDirection > Math.PI ? 3 * Math.PI/2 : Math.PI/2;
+          newDirection = newDirection > Math.PI ? 3 * Math.PI / 2 : Math.PI / 2;
         }
       } else {
         if (newY < 0) {
           // top edge
           newY = 0;
-          newDirection = newDirection > 3 * Math.PI/2 ? 0 : Math.PI;
+          newDirection = newDirection > 3 * Math.PI / 2 ? 0 : Math.PI;
         } else if (newY > maxY) {
           // bottom edge
           newY = maxY;
-          newDirection = newDirection > Math.PI/2 ? Math.PI : 0;
+          newDirection = newDirection > Math.PI / 2 ? Math.PI : 0;
         }
       }
 
@@ -92,7 +92,7 @@ function reducer(state, action) {
       if (!state.active) {
         return state;
       }
-      
+
       setTimeout(
         () => action.dispatch({ type: "wakeUp" }),
         state.downtime * 1000
@@ -113,8 +113,8 @@ function Bug(props) {
 
   const handleTimeStep = useCallback(
     () => {
-      dispatch({type: "timeStep", windowSize: props.windowSize});
-    }, 
+      dispatch({ type: "timeStep", windowSize: props.windowSize });
+    },
     [props.windowSize]
   );
 
@@ -122,7 +122,7 @@ function Bug(props) {
     () => {
       const timeStepInterval = setInterval(handleTimeStep, TIMESTEP);
       return () => clearInterval(timeStepInterval);
-    }, 
+    },
     [handleTimeStep]
   );
 
@@ -150,10 +150,16 @@ function Bug(props) {
   );
 
   return (
-    <div 
-      className="Bug" 
-      style={{ left: state.x, top: state.y, height: SIZE, width: SIZE, boxShadow: state.active ? "0px 2px 6px rgba(0, 0, 0, 0.5)" : "0px 0px 3px rgba(0, 0, 0, 0.5)" }}
-      onClick= {() => dispatch({ type: "squash", dispatch: dispatch })}
+    <div
+      className="Bug"
+      style={{
+        left: state.x,
+        top: state.y,
+        height: SIZE,
+        width: SIZE,
+        boxShadow: state.active ? "0px 2px 6px rgba(0, 0, 0, 0.5)" : "0px 0px 3px rgba(0, 0, 0, 0.5)",
+      }}
+      onClick={() => dispatch({ type: "squash", dispatch: dispatch })}
     ></div>
   );
 }

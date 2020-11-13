@@ -10,10 +10,10 @@ function reducer(state, action) {
   let newState;
   switch (action.type) {
     case "squashed":
-      newState = { ...state, score: state.score + 1};
+      newState = { ...state, score: state.score + 1 };
       break;
     case "awoke":
-      newState = { ...state, score: state.score - 1};
+      newState = { ...state, score: state.score - 1 };
       break;
     case "escaped":
       newState = { ...state, bugs: state.bugs.filter(bugKey => bugKey !== action.key) };
@@ -27,7 +27,7 @@ function reducer(state, action) {
   }
 
   if (newState.score === newState.bugs.length) {
-    newState.bugs = [...newState.bugs, Date.now() ];
+    newState.bugs = [...newState.bugs, Date.now()];
   }
 
   return newState;
