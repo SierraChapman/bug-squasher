@@ -7,27 +7,48 @@ function getWindowSize() {
 }
 
 function reducer(state, action) {
-  let newState;
+  let newState = state;
+
   switch (action.type) {
     case "squashed":
-      newState = { ...state, score: state.score + 1 };
+      const newActiveBugs = state.activeBugs.filter(bugKey => bugKey !== action.key);
+
+      if (newActiveBugs.length < state.activeBugs.length) {
+        newState = {
+          ...state,
+          activeBugs: newActiveBugs,
+          inactiveBugs: [...state.inactiveBugs, action.key],
+        };
+      }
+
       break;
+
     case "awoke":
-      newState = { ...state, score: state.score - 1 };
+      const newInactiveBugs = state.inactiveBugs.filter(bugKey => bugKey !== action.key);
+
+      if (newInactiveBugs.length < state.inactiveBugs.length) {
+        newState = {
+          ...state,
+          activeBugs: [...state.activeBugs, action.key],
+          inactiveBugs: newInactiveBugs,
+        };
+      }
+
       break;
+
     case "escaped":
-      newState = { ...state, bugs: state.bugs.filter(bugKey => bugKey !== action.key) };
+      newState = { ...state, activeBugs: state.activeBugs.filter(bugKey => bugKey !== action.key) };
       break;
+
     default:
-      newState = state;
   }
 
-  if (newState.score > newState.highScore) {
-    newState.highScore = newState.score;
+  if (newState.inactiveBugs.length > newState.highScore) {
+    newState.highScore = newState.inactiveBugs.length;
   }
 
-  if (newState.score === newState.bugs.length) {
-    newState.bugs = [...newState.bugs, Date.now()];
+  if (newState.activeBugs.length === 0) {
+    newState.activeBugs = [...newState.activeBugs, Date.now()];
   }
 
   return newState;
@@ -37,8 +58,8 @@ function App() {
   const [windowSize, setWindowSize] = useState(getWindowSize());
 
   const [state, dispatch] = useReducer(reducer, {
-    bugs: [Date.now()],
-    score: 0,
+    activeBugs: [Date.now()],
+    inactiveBugs: [],
     highScore: 0,
   });
 
@@ -51,10 +72,13 @@ function App() {
   return (
     <div className="App">
       <div className="scores">
-        <div>CURRENT SCORE: {state.score}</div>
+        <div>CURRENT SCORE: {state.inactiveBugs.length}</div>
         <div>HIGH SCORE: {state.highScore}</div>
       </div>
-      {state.bugs.map(bugKey => <Bug key={bugKey} id={bugKey} windowSize={windowSize} appDispatch={dispatch} />)}
+      {[
+        ...state.inactiveBugs.map(bugKey => <Bug key={bugKey} id={bugKey} windowSize={windowSize} appDispatch={dispatch} />),
+        ...state.activeBugs.map(bugKey => <Bug key={bugKey} id={bugKey} windowSize={windowSize} appDispatch={dispatch} />).reverse()
+      ]}
     </div>
   );
 }

@@ -109,7 +109,6 @@ function reducer(state, action) {
 
 function Bug(props) {
   const [state, dispatch] = useReducer(reducer, generateInitialState(props.windowSize));
-  const initialRender = useRef(true);
 
   const handleTimeStep = useCallback(
     () => {
@@ -130,11 +129,7 @@ function Bug(props) {
 
   useEffect(
     () => {
-      if (initialRender.current) {
-        initialRender.current = false;
-      } else {
-        appDispatch({ type: state.active ? "awoke" : "squashed" });
-      }
+      appDispatch({ type: state.active ? "awoke" : "squashed", key: id });
 
       if (state.active) {
         const escapeTimeout = setTimeout(
